@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Implementation</title>
+</head>
+<body>
+    <h1>Machine Learning Model Implementation</h1>
+    
+    <form id="prediction-form">
+        <label for="input-data">Input Data:</label>
+        <input type="text" id="input-data" placeholder="Enter data...">
+        <button type="submit">Predict</button>
+    </form>
+    
+    <div id="prediction-result"></div>
+    
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const inputData = document.getElementById('input-data').value;
+            
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: inputData.split(',').map(Number)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('prediction-result').textContent = `Prediction: ${data.prediction}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <ul>
+        {% for category, confidence in categories_confidences %}
+            <li>{{ category }} - Confidence: {{ confidence }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

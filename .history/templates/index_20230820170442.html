@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Implementation</title>
+</head>
+<body>
+    <h1>Machine Learning Model Implementation</h1>
+    
+    <form id="upload-form" enctype="multipart/form-data">
+        <label for="file-input">Upload an Image:</label>
+        <input type="file" id="file-input" accept="image/*">
+        <button type="submit">Predict</button>
+    </form>
+    
+    <div id="prediction-result"></div>
+    
+    <img id="uploaded-image" src="#" alt="Uploaded Image" style="display: none; max-width: 300px;">
+    
+    
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('file-input');
+            const uploadedImage = document.getElementById('uploaded-image');
+            const predictionResult = document.getElementById('prediction-result');
+            
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const prediction = data.prediction;
+                predictionResult.textContent = `Predicted Class: ${prediction}`;
+                
+                uploadedImage.src = URL.createObjectURL(file);
+                uploadedImage.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+    </script>
+</body>
+</html>

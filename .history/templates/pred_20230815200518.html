@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Prediction</title>
+</head>
+<body>
+    <h2>Top Predicted Categories:</h2>
+    <ul>
+        {% for category, confidence in categories_confidences %}
+            <li>{{ category }} - Confidence: {{ confidence }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

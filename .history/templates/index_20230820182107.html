@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNN Model Implementation</title>
+</head>
+<body>
+    <h1>CNN Model Implementation</h1>
+    
+    <form id="prediction-form" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <button type="submit">Predict</button>
+    </form>
+    
+    <div id="prediction-result"></div>
+    
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('prediction-form'));
+            
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('prediction-result').textContent = `Prediction: ${data.prediction}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
