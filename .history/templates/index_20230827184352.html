@@ -1,3 +1,56 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNN Model Implementation</title>
+</head>
+<body>
+    <h1>CNN Model Implementation</h1>
+    
+    <form id="prediction-form" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <button type="submit">Predict</button>
+    </form>
+    
+    <div id="prediction-result"></div>
+    
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('prediction-form'));
+            
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('prediction-result');
+                resultDiv.innerHTML = ""; // Clear previous results
+                
+                const predictions = data.predictions;
+                for (const prediction of predictions) {
+                    const class_name = prediction.class_name;
+                    const score = prediction.score;
+                    
+                    const predictionInfo = document.createElement('p');
+                    predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
+                    resultDiv.appendChild(predictionInfo);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +63,7 @@
         <button type="submit">Predict</button>
         <button id="convert-and-predict">Convert & Predict</button>
     </form>
-    <!-- <img id="converted-image" style="max-width: 100%; display: none;"> -->
+    
     <div id="prediction-result"></div>
     <style>
         canvas {
@@ -143,123 +196,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        document.getElementById('convert-and-predict').addEventListener('click', convertAndPredict);
-
-function convertAndPredict() {
-    // Convert canvas content to image (JPEG)
-    const canvasDataUrl = canvas.toDataURL('image/jpeg');
-
-    // Display the converted image
-    const convertedImage = document.getElementById('converted-image');
-    convertedImage.src = canvasDataUrl;
-    convertedImage.style.display = 'block';
-
-    // Create a Blob from the data URL
-    const blob = dataURLtoBlob(canvasDataUrl);
-
-    // Create a FormData object to send the image
-    const formData = new FormData();
-    formData.append('image', blob, 'canvas-image.jpg');
-
-    // Send the FormData to the server
-    fetch('/predict', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        const resultDiv = document.getElementById('prediction-result');
-        resultDiv.innerHTML = ""; // Clear previous results
-        
-        const predictions = data.predictions;
-        for (const prediction of predictions) {
-            const class_name = prediction.class_name;
-            const score = prediction.score;
-            
-            const predictionInfo = document.createElement('p');
-            predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
-            resultDiv.appendChild(predictionInfo);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-// Helper function to convert data URL to Blob
-document.getElementById('convert-and-predict').addEventListener('click', convertAndPredict);
-
-function convertAndPredict() {
-    // Convert uncolored pixels to white
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < imageData.data.length; i += 4) {
-        if (
-            imageData.data[i] === 0 &&
-            imageData.data[i + 1] === 0 &&
-            imageData.data[i + 2] === 0 &&
-            imageData.data[i + 3] === 0
-        ) {
-            imageData.data[i] = 255; // Red channel
-            imageData.data[i + 1] = 255; // Green channel
-            imageData.data[i + 2] = 255; // Blue channel
-            imageData.data[i + 3] = 255; // Alpha channel
-        }
-    }
-    ctx.putImageData(imageData, 0, 0);
-
-    // Convert canvas content to image (JPEG)
-    const canvasDataUrl = canvas.toDataURL('image/jpeg');
-
-    // Display the converted image
-    const convertedImage = document.getElementById('converted-image');
-    convertedImage.src = canvasDataUrl;
-    convertedImage.style.display = 'block';
-
-    // Create a Blob from the data URL
-    const blob = dataURLtoBlob(canvasDataUrl);
-
-    // Create a FormData object to send the image
-    const formData = new FormData();
-    formData.append('image', blob, 'canvas-image.jpg');
-
-    // Send the FormData to the server
-    fetch('/predict', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        const resultDiv = document.getElementById('prediction-result');
-        resultDiv.innerHTML = ""; // Clear previous results
-        
-        const predictions = data.predictions;
-        for (const prediction of predictions) {
-            const class_name = prediction.class_name;
-            const score = prediction.score;
-            
-            const predictionInfo = document.createElement('p');
-            predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
-            resultDiv.appendChild(predictionInfo);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-// Helper function to convert data URL to Blob
-function dataURLtoBlob(dataURL) {
-    const byteString = atob(dataURL.split(',')[1]);
-    const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-
-    for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-
-    return new Blob([ab], { type: mimeString });
-}
+    
     </script>
 </body>
 </html>

@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../Flag_Finder"
+		},
+		{
+			"name": "Flag-Guesser",
+			"path": "."
+		}
+	],
+	"settings": {}
+}

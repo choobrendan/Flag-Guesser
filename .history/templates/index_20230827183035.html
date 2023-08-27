@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNN Model Implementation</title>
+</head>
+<body>
+    <h1>CNN Model Implementation</h1>
+    
+    <form id="prediction-form" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <button type="submit">Predict</button>
+    </form>
+    
+    <div id="prediction-result"></div>
+    
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('prediction-form'));
+            
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('prediction-result');
+                resultDiv.innerHTML = ""; // Clear previous results
+                
+                const predictions = data.predictions;
+                for (const prediction of predictions) {
+                    const class_name = prediction.class_name;
+                    const score = prediction.score;
+                    
+                    const predictionInfo = document.createElement('p');
+                    predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
+                    resultDiv.appendChild(predictionInfo);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1>CNN Model Implementation</h1>
+    
+    <form id="prediction-form" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <button type="submit">Predict</button>
+    </form>
+    
+    <div id="prediction-result"></div>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Paint Application</h1>
+    
+    <canvas id="paint-canvas" width="800" height="600"></canvas>
+    
+    <div id="paint-controls">
+        <button id="brush-tool">Brush</button>
+        <button id="bucket-tool">Bucket</button>
+        <input type="color" id="color-picker" value="#000000">
+        <label for="brush-size">Brush Size:</label>
+        <input type="range" id="brush-size" min="1" max="20" value="5">
+        <button id="clear-canvas">Clear Canvas</button>
+    </div>
+
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('prediction-form'));
+            
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('prediction-result');
+                resultDiv.innerHTML = ""; // Clear previous results
+                
+                const predictions = data.predictions;
+                for (const prediction of predictions) {
+                    const class_name = prediction.class_name;
+                    const score = prediction.score;
+                    
+                    const predictionInfo = document.createElement('p');
+                    predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
+                    resultDiv.appendChild(predictionInfo);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+        const canvas = document.getElementById('paint-canvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+        let currentTool = 'brush';
+        let currentColor = '#000000';
+        let brushSize = 5;
+
+        canvas.addEventListener('mousedown', startPainting);
+        canvas.addEventListener('mouseup', stopPainting);
+        canvas.addEventListener('mousemove', draw);
+
+        document.getElementById('brush-tool').addEventListener('click', useBrush);
+        document.getElementById('bucket-tool').addEventListener('click', useBucket);
+        document.getElementById('color-picker').addEventListener('input', pickColor);
+        document.getElementById('brush-size').addEventListener('input', updateBrushSize);
+        document.getElementById('clear-canvas').addEventListener('click', clearCanvas);
+
+        function startPainting(event) {
+            painting = true;
+            draw(event);
+        }
+
+        function stopPainting() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(event) {
+            if (!painting) return;
+
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentColor;
+
+            ctx.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+        }
+
+        function useBrush() {
+            currentTool = 'brush';
+        }
+
+        function useBucket() {
+            currentTool = 'bucket';
+        }
+
+        function pickColor(event) {
+            currentColor = event.target.value;
+        }
+
+        function updateBrushSize(event) {
+            brushSize = event.target.value;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
+

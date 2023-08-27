@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint and Predict</title>
+</head>
+<body>
+    <h1>Paint and Predict</h1>
+
+    <canvas id="paint-canvas" width="800" height="600"></canvas>
+
+    <div id="paint-controls">
+        <button id="brush-tool">Brush</button>
+        <button id="bucket-tool">Bucket</button>
+        <input type="color" id="color-picker" value="#000000">
+        <label for="brush-size">Brush Size:</label>
+        <input type="range" id="brush-size" min="1" max="20" value="5">
+        <button id="clear-canvas">Clear Canvas</button>
+        <button id="predict-button">Predict</button>
+    </div>
+
+    <div id="prediction-result"></div>
+
+    <script>
+        const canvas = document.getElementById('paint-canvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+        let currentTool = 'brush';
+        let currentColor = '#000000';
+        let brushSize = 5;
+        let strokesSinceLastPrediction = 0; // Counter for brush strokes
+
+        canvas.addEventListener('mousedown', startPainting);
+        canvas.addEventListener('mouseup', stopPainting);
+        canvas.addEventListener('mousemove', draw);
+
+        document.getElementById('brush-tool').addEventListener('click', useBrush);
+        document.getElementById('bucket-tool').addEventListener('click', useBucket);
+        document.getElementById('color-picker').addEventListener('input', pickColor);
+        document.getElementById('brush-size').addEventListener('input', updateBrushSize);
+        document.getElementById('clear-canvas').addEventListener('click', clearCanvas);
+        document.getElementById('predict-button').addEventListener('click', predictImage);
+
+        function startPainting(event) {
+            painting = true;
+            draw(event);
+        }
+
+        function stopPainting() {
+            painting = false;
+            ctx.beginPath();
+            strokesSinceLastPrediction++;
+
+            if (strokesSinceLastPrediction >= 5) {
+                predictImage();
+                strokesSinceLastPrediction = 0;
+            }
+        }
+
+        function draw(event) {
+            if (!painting) return;
+
+            const canvasRect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - canvasRect.left;
+            const mouseY = event.clientY - canvasRect.top;
+
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentColor;
+
+            ctx.lineTo(mouseX, mouseY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(mouseX, mouseY);
+        }
+
+        function useBrush() {
+            currentTool = 'brush';
+            canvas.style.cursor = 'crosshair';
+        }
+
+        function useBucket() {
+            currentTool = 'bucket';
+            canvas.style.cursor = 'url(bucket-cursor.png), auto'; // Set your bucket cursor image
+        }
+
+        function pickColor(event) {
+            currentColor = event.target.value;
+            if (currentTool === 'brush') {
+                canvas.style.cursor = 'crosshair';
+            }
+        }
+
+        function updateBrushSize(event) {
+            brushSize = event.target.value;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            strokesSinceLastPrediction = 0;
+        }
+
+        function predictImage() {
+            // You can implement the image prediction logic here
+            // Replace this with the actual fetch to your prediction endpoint
+            fetch('/predict', {
+                method: 'POST',
+                body: canvas.toDataURL() // Convert canvas content to data URL
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('prediction-result');
+                resultDiv.innerHTML = "";
+
+                const predictions = data.predictions;
+                for (const prediction of predictions) {
+                    const class_name = prediction.class_name;
+                    const score = prediction.score;
+
+                    const predictionInfo = document.createElement('p');
+                    predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
+                    resultDiv.appendChild(predictionInfo);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
