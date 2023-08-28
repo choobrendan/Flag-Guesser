@@ -4,19 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <h1>CNN Model Implementation</h1>
-    <link rel="stylesheet" href="styles.css">
     <style>
         canvas {
             border: 1px solid black;
         }
-        #main{
-    display: flex;
-}
     </style>
 </head>
 <body>
-    <div id="main">
-    <div id="prediction-part">
     <form id="prediction-form" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/*">
         <button type="submit">Predict</button>
@@ -32,9 +26,8 @@
         <input type="range" id="brush-size" min="1" max="20" value="5">
         <button id="clear-canvas">Clear Canvas</button>
     </div>
-</div>
+    <div></div>
     <div id="prediction-result"></div>
-</div>
     <img id="converted-image" style="max-width: 100%; display: none;">
     <script>
         document.getElementById('prediction-form').addEventListener('submit', function(event) {
