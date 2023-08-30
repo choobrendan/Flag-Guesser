@@ -14,11 +14,8 @@
             
         }
         #prediction-result{
-            width:50%;
-            font-size: 24px;
-            font-family: Georgia, 'Times New Roman', Times, serif;
+            width:50
         }
-
     </style>
 </head>
 <body>
@@ -64,7 +61,7 @@
                     const score = prediction.score;
                     
                     const predictionInfo = document.createElement('p');
-                    predictionInfo.textContent = `${class_name}, Confidence: ${score}`;
+                    predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
                     resultDiv.appendChild(predictionInfo);
                 }
             })
@@ -212,7 +209,7 @@ function convertAndPredict() {
             const score = prediction.score;
             
             const predictionInfo = document.createElement('p');
-            predictionInfo.textContent = `${class_name}, Confidence: ${score}`;
+            predictionInfo.textContent = `Nation: ${class_name}, Confidence: ${score}`;
             resultDiv.appendChild(predictionInfo);
         }
     })
